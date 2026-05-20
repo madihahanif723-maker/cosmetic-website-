@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glow & Co. | Luxury Cosmetics</title>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- External CSS Link -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- NAVBAR SECTION -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <a href="#home"><i class="fas fa-sparkles"></i> GLOW & CO.</a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="product.html">Products</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="nav-icons">
+                <a href="#"><i class="fas fa-search"></i></a>
+                <a href="#" class="cart-icon"><i class="fas fa-shopping-bag"></i><span class="cart-count">0</span></a>
+            </div>
+        </nav>
+    </header>
+
+       <!-- CONTACT SECTION -->
+    <section id="contact" class="contact-section">
+        <div class="contact-container">
+            <div class="contact-info">
+                <h2>Get In Touch</h2>
+                <p>Have questions about our premium cosmetics or need help picking the perfect shade? Drop us a message, and our beauty experts will get back to you.</p>
+                <div class="info-details">
+                    <p><i class="fas fa-envelope"></i> support@glowandco.com</p>
+                    <p><i class="fas fa-phone"></i> +92 300 1234567</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Karachi, Pakistan</p>
+                </div>
+            </div>
+            
+            <div class="contact-form-container">
+                <form class="beauty-form" id="beautyForm">
+                    <div class="form-group">
+                        <label for="userName">Full Name</label>
+                        <input type="text" id="userName" required placeholder="Enter your name">
+                    </div>
+                    <div class="form-group">
+                        <label for="userEmail">Email Address</label>
+                        <input type="email" id="userEmail" required placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label for="userMessage">Your Message</label>
+                        <textarea id="userMessage" rows="5" required placeholder="How can we help you look flawless today?"></textarea>
+                    </div>
+                    <button type="submit" class="form-submit-btn">Send Message <i class="fas fa-paper-plane"></i></button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- External JavaScript Link -->
+     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glow & Co. | Luxury Cosmetics</title>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- External CSS Link -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- NAVBAR SECTION -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <a href="#home"><i class="fas fa-sparkles"></i> GLOW & CO.</a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="product.html">Products</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="nav-icons">
+                <a href="#"><i class="fas fa-search"></i></a>
+                <a href="#" class="cart-icon"><i class="fas fa-shopping-bag"></i><span class="cart-count">0</span></a>
+            </div>
+        </nav>
+    </header>
+
+
+    <!-- PRODUCTS SECTION (Dynamic via Makeup API) -->
+    <section id="products" class="products-section">
+        <div class="section-title">
+            <h2>Our Trending Collection</h2>
+            <p>Discover 100 premium beauty products fetched live from our dynamic makeup server catalogue.</p>
+        </div>
+        
+        <!-- Loading Spinner -->
+        <div id="loading" class="loading">
+            <i class="fas fa-spinner fa-spin"></i> Loading Premium Cosmetics...
+        </div>
+
+        <!-- Products Grid Container -->
+        <div id="products-grid" class="products-grid"></div>
+    </section>
+
+    <!-- FOOTER SECTION -->
+    <footer>
+        <p>&copy; 2026 Glow & Co. Cosmetics. All Rights Reserved.</p>
+    </footer>
+
+    <!-- External JavaScript Link -->
+    <script src="app.js"></script>
+</body>
+</html>
