@@ -3,56 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Glow & Co. | Luxury Cosmetics</title>
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- External CSS Link -->
+    <title>Our Products - Cosmetic Sparkle</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- NAVBAR SECTION -->
-    <header>
-        <nav class="navbar">
-            <div class="logo">
-                <a href="#home"><i class="fas fa-sparkles"></i> GLOW & CO.</a>
+    <nav class="navbar navbar-expand-lg glass-nav sticky-top">
+        <div class="container">
+            <a class="navbar-brand logo-text" href="index.html">Cosmetic Sparkle ✨</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="product.html">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contact.html">Contact</a>
+                    </li>
+                </ul>
+                <span class="badge assignment-badge ms-lg-3">Promise & Fetch API</span>
             </div>
-            <ul class="nav-links">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="product.html">Products</a></li>
-                <li><a href="about.html">About Us</a></li>
-                <li><a href="contact.html">Contact</a></li>
-            </ul>
-            <div class="nav-icons">
-                <a href="#"><i class="fas fa-search"></i></a>
-                <a href="#" class="cart-icon"><i class="fas fa-shopping-bag"></i><span class="cart-count">0</span></a>
-            </div>
-        </nav>
-    </header>
-
-
-    <!-- PRODUCTS SECTION (Dynamic via Makeup API) -->
-    <section id="products" class="products-section">
-        <div class="section-title">
-            <h2>Our Trending Collection</h2>
-            <p>Discover 100 premium beauty products fetched live from our dynamic makeup server catalogue.</p>
         </div>
-        
-        <!-- Loading Spinner -->
-        <div id="loading" class="loading">
-            <i class="fas fa-spinner fa-spin"></i> Loading Premium Cosmetics...
+    </nav>
+
+    <main class="container py-5">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold text-dark">Our Cosmetics Collection 👑</h2>
+            <p class="text-muted">Filter items smoothly powered by asynchronous JavaScript array methods.</p>
         </div>
 
-        <!-- Products Grid Container -->
-        <div id="products-grid" class="products-grid"></div>
-    </section>
+        <div class="d-flex flex-wrap justify-content-center gap-2 mb-5" id="filter-buttons-container">
+            <button onclick="filterProducts('all', this)" class="btn filter-btn active-filter rounded-pill px-4 py-2 shadow-sm">All Products</button>
+            <button onclick="filterProducts('lipstick', this)" class="btn filter-btn bg-white rounded-pill px-4 py-2 shadow-sm">Lipsticks</button>
+            <button onclick="filterProducts('foundation', this)" class="btn filter-btn bg-white rounded-pill px-4 py-2 shadow-sm">Foundation</button>
+            <button onclick="filterProducts('eyeliner', this)" class="btn filter-btn bg-white rounded-pill px-4 py-2 shadow-sm">Eyeliner</button>
+            <button onclick="filterProducts('eyeshadow', this)" class="btn filter-btn bg-white rounded-pill px-4 py-2 shadow-sm">Eyeshadow</button>
+        </div>
 
-    <!-- FOOTER SECTION -->
-    <footer>
-        <p>&copy; 2026 Glow & Co. Cosmetics. All Rights Reserved.</p>
+        <div id="loading" class="text-center py-5">
+            <div class="spinner-border text-pink mb-3" role="status" style="width: 3rem; height: 3rem; color: #db2777;"></div>
+            <p class="text-muted fw-medium">Resolving Promise: Fetching Real-Time API Data...</p>
+        </div>
+
+        <div id="products-grid" class="row g-4 d-none">
+            </div>
+    </main>
+
+    <footer class="py-4 text-center text-muted border-top bg-light-glass mt-5">
+        <div class="container">
+            <p class="mb-0">© 2026 Cosmetic Sparkle | Powered by Live Fetch API & Glassmorphism Design</p>
+        </div>
     </footer>
 
-    <!-- External JavaScript Link -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <script src="app.js"></script>
 </body>
 </html>

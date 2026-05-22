@@ -1,204 +1,134 @@
-// Wait until the HTML structure is fully loaded
-document.addEventListener("DOMContentLoaded", () => {
+let allFetchedProducts = []; 
+function fetchCosmeticsFromAPI() {
+    const apiUrl = "https://makeup-api.herokuapp.com/api/v1/products.json?brand=maybelline";
 
-    // Purana original API URL jo aapne pehli file mein use kiya tha
-    const apiURL = "https://makeup-api.herokuapp.com/api/v1/products.json?product_type=perfume";
+    return fetch(apiUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.json();
+        })
+        .then(data => {
+            return data.filter(item => item.image_link && item.price && item.product_type).slice(0, 24);
+        });
+}
 
-    // Purana fallback URL jo aapne pehli file mein backup ke taur par lagaya tha
-    const fallbackURL = "https://makeup-api.herokuapp.com/api/v1/products.json?product_tags=Natural";
+function displayProducts(productsList) {
+    const gridContainer = document.getElementById("products-grid");
+    gridContainer.innerHTML = ""; // Container saaf karein
 
-    const productsGrid = document.getElementById("products-grid");
-    const loadingSpinner = document.getElementById("loading");
-    const cartCountEl = document.querySelector(".cart-count");
-    const cartIcon = document.querySelector(".cart-icon");
-
-    let cartCount = 0;
-    let cartItems = [];
-
-    function updateCartBadge() {
-        cartCountEl.textContent = cartCount;
+    if(productsList.length === 0) {
+        gridContainer.innerHTML = `
+            <div class="col-12 text-center py-5">
+                <p class="text-muted fs-5">No products found in this category.</p>
+            </div>
+        `;
+        return;
     }
 
-    function createCartModal() {
-        const modal = document.createElement("div");
-        modal.classList.add("cart-modal-overlay");
-        modal.id = "cart-modal";
-        modal.innerHTML = `
-            <div class="cart-modal-window">
-                <button class="cart-close-btn" aria-label="Close cart">&times;</button>
-                <h2>Your Cart</h2>
-                <div class="cart-modal-body"></div>
-                <div class="cart-modal-footer">
-                    <div class="cart-total"></div>
-                    <button class="checkout-btn">Checkout</button>
+    productsList.forEach(product => {
+        const finalPrice = product.price.startsWith('$') ? product.price : `$${product.price}`;
+        
+        const cardHtml = `
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="card glass-product-card p-3 shadow-sm d-flex flex-column justify-between">
+                    <div>
+                        <div class="card-img-container mb-3">
+                            <img src="${product.image_link}" alt="${product.name}" onerror="this.src='https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=300'">
+                        </div>
+                        <span class="badge bg-secondary-subtle text-dark text-capitalize mb-2">${product.product_type}</span>
+                        <h5 class="card-title text-dark text-truncate mb-1" title="${product.name}">${product.name}</h5>
+                        <p class="card-text text-muted small text-truncate-2" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 40px;">
+                            ${product.description ? product.description : 'Premium quality formulation to enhance your daily beautiful glow up look.'}
+                        </p>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-between mt-3 pt-2 border-top">
+                        <span class="fs-5 fw-bold text-dark">${finalPrice}</span>
+                        <button onclick="showAlert('Added to Bag!', '${product.name.replace(/'/g, "\\'")} has been added successfully.', 'success')" class="btn btn-add-bag btn-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bag-plus-fill" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M10.5 3.5a2.5 2.5 0 0 0-5 0V4h5v-.5zm1 0V4H15v10a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V4h3.5v-.5a3.5 3.5 0 1 1 7 0zM8.5 8a.5.5 0 0 0-1 0v1.5H6a.5.5 0 0 0 0 1h1.5V12a.5.5 0 0 0 1 0v-1.5H10a.5.5 0 0 0 0-1H8.5V8z"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
         `;
-
-        modal.addEventListener("click", (event) => {
-            if (event.target === modal) {
-                closeCartModal();
-            }
-        });
-
-        modal.querySelector(".cart-close-btn").addEventListener("click", closeCartModal);
-        document.body.appendChild(modal);
-        return modal;
-    }
-
-    function renderCartModal(cartModal) {
-        const body = cartModal.querySelector(".cart-modal-body");
-        const totalLabel = cartModal.querySelector(".cart-total");
-
-        if (cartItems.length === 0) {
-            body.innerHTML = `<p class="cart-empty-message">Your cart is empty. Add an item to see it here.</p>`;
-            totalLabel.textContent = "Total: $0.00";
-            return;
-        }
-
-        let totalAmount = 0;
-        body.innerHTML = cartItems.map(item => {
-            const price = parseFloat(item.price.replace(/[^0-9\.]/g, "")) || 0;
-            totalAmount += price;
-            return `
-                <div class="cart-item">
-                    <div class="cart-item-name">${item.name}</div>
-                    <div class="cart-item-price">${item.price}</div>
-                </div>
-            `;
-        }).join("");
-
-        totalLabel.textContent = `Total: $${totalAmount.toFixed(2)}`;
-    }
-
-    function openCartModal(cartModal) {
-        renderCartModal(cartModal);
-        cartModal.classList.add("visible");
-    }
-
-    function closeCartModal() {
-        const cartModal = document.getElementById("cart-modal");
-        if (cartModal) {
-            cartModal.classList.remove("visible");
-        }
-    }
-
-    // 1. Fetch data using your original API links
-    async function fetchCosmeticsData() {
-        try {
-            let response = await fetch(apiURL);
-            let data = await response.json();
-
-            // Agar pehla link empty data return kare, toh fallback url chalega (purani logic)
-            if (data.length === 0) {
-                response = await fetch(fallbackURL);
-                data = await response.json();
-            }
-
-            // Hide loading spinner instantly
-            loadingSpinner.style.display = "none";
-
-            // Slicing first 100 products from the dataset
-            renderCosmetics(data.slice(0, 100));
-
-        } catch (error) {
-            console.error("API Fetch Error:", error);
-            loadingSpinner.innerHTML = "<p style='color: #d9534f;'>Unable to stream live beauty catalogue. Please reload the webpage.</p>";
-        }
-    }
-
-    // 2. Map data stream into beautiful UI blocks matching the makeup theme
-    function renderCosmetics(itemsList) {
-        productsGrid.innerHTML = ""; // Clear grid completely
-
-        itemsList.forEach(product => {
-            // High-quality cosmetic fallback image if API object link is broken
-            const fallbackImg = "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=300&q=80";
-            const currentImg = product.image_link ? product.image_link : fallbackImg;
-
-            // Format prices cleanly ($), if free/null assign a baseline value
-            const finalPrice = product.price && parseFloat(product.price) > 0
-                ? `$${parseFloat(product.price).toFixed(2)}`
-                : "$24.00";
-
-            const productBrand = product.brand ? product.brand : "Glow Premium";
-
-            // Create element node
-            const cardNode = document.createElement("div");
-            cardNode.classList.add("product-card");
-
-            cardNode.innerHTML = `
-                <div>
-                    <div class="product-img-container">
-                        <img src="${currentImg}" onerror="this.onerror=null; this.src='${fallbackImg}';" alt="${product.name}">
-                    </div>
-                    <div class="product-brand">${productBrand}</div>
-                    <div class="product-title">${product.name}</div>
-                </div>
-                <div>
-                    <div class="product-price">${finalPrice}</div>
-                    <button class="add-to-cart-btn"><i class="fas fa-shopping-cart"></i> Add to Cart</button>
-                </div>
-            `;
-
-            // Setup click event for cart count handling
-            const cartBtn = cardNode.querySelector(".add-to-cart-btn");
-            cartBtn.addEventListener("click", () => {
-                    cartCount++;
-                cartItems.push({ name: product.name, price: finalPrice });
-                updateCartBadge();
-
-                // Cosmetics theme styling button feedback on click
-                cartBtn.innerHTML = "<i class='fas fa-check'></i> Item Added";
-                cartBtn.style.backgroundColor = "#e0a996";
-                cartBtn.style.color = "white";
-                cartBtn.style.borderColor = "#e0a996";
-
-                setTimeout(() => {
-                    cartBtn.innerHTML = "<i class='fas fa-shopping-cart'></i> Add to Cart";
-                    cartBtn.style.backgroundColor = "transparent";
-                    cartBtn.style.color = "#1e1e1e";
-                    cartBtn.style.borderColor = "#1e1e1e";
-                }, 1100);
-            });
-
-            // Push nodes layout onto live screen grid wrapper
-            productsGrid.appendChild(cardNode);
-        });
-    }
-
-    const cartModal = createCartModal();
-
-    if (cartIcon) {
-        cartIcon.addEventListener("click", (event) => {
-            event.preventDefault();
-            openCartModal(cartModal);
-        });
-    }
-
-    // Initialize layout trigger
-    fetchCosmeticsData();
-});
-// 3. Contact Form Submission Handling
-const contactForm = document.getElementById("beautyForm");
-if (contactForm) {
-    contactForm.addEventListener("submit", (e) => {
-        e.preventDefault(); // Page refresh hone se rokega
-
-        const nameInput = document.getElementById("userName").value;
-
-        // Show alert feedback message
-        Swal.fire({
-            title: 'Message Sent!',
-            text: `Thank you, ${nameInput}! Your message has been sent successfully to Glow & Co. Our beauty experts will contact you soon.`,
-            icon: 'success',
-            background: '#F7F0EB', // Isse light glass effect aayega
-            backdrop: `
-    rgba(0,0,123,0.4)
-    blur(4px)
-  `, // Background screen blur karne ke liye
-            confirmButtonColor: '#f0d2bc'
-        });
-        contactForm.reset(); // Clear all form fields
+        gridContainer.insertAdjacentHTML("beforeend", cardHtml);
     });
 }
+
+// 3. SMART FILTER LOGIC (As requested from SmartMart website style)
+function filterProducts(category, buttonElement) {
+    // Buttons ki active classes manage karna
+    const allButtons = document.querySelectorAll(".filter-btn");
+    allButtons.forEach(btn => {
+        btn.classList.remove("active-filter");
+        btn.classList.add("bg-white");
+    });
+    buttonElement.classList.add("active-filter");
+    buttonElement.classList.remove("bg-white");
+
+    // Live array filter logic
+    if (category === "all") {
+        displayProducts(allFetchedProducts);
+    } else {
+        const filtered = allFetchedProducts.filter(item => item.product_type.toLowerCase() === category.toLowerCase());
+        displayProducts(filtered);
+    }
+}
+
+// 4. SweetAlert Helper function
+function showAlert(title, text, icon) {
+    Swal.fire({
+        title: title,
+        text: text,
+        icon: icon,
+        confirmButtonColor: '#db2777',
+        background: 'rgba(255, 255, 255, 0.95)'
+    });
+}
+
+// 5. WINDOW LOAD PAR PROMISE RUN KARNA
+document.addEventListener("DOMContentLoaded", () => {
+    // Calling the function that handles fetch Promise
+    fetchCosmeticsFromAPI()
+        .then((data) => {
+            allFetchedProducts = data; // Data ko globally save kiya
+            
+            // Loading spinner hide karein aur grid show karein
+            document.getElementById("loading").classList.add("d-none");
+            const grid = document.getElementById("products-grid");
+            grid.classList.remove("d-none");
+            
+            // All products display karein
+            displayProducts(data);
+        })
+        .catch((error) => {
+            console.error("Promise rejected:", error);
+            document.getElementById("loading").innerHTML = `
+                <div class="alert alert-danger d-inline-block mx-auto" role="alert">
+                    ⚠️ <strong>Promise Rejected:</strong> Failed to fetch live data from Makeup API.
+                </div>
+            `;
+        });
+});
+
+    function handleContactSubmit(event) {
+            event.preventDefault(); // Page reload hone se rokna
+            
+            // Input values ko target karna
+            const name = document.getElementById('userName').value;
+
+            // Premium SweetAlert Trigger
+            Swal.fire({
+                title: `Thank You, ${name}!`,
+                text: 'Your message has been successfully transmitted.',
+                icon: 'success',
+                confirmButtonColor: '#db2777',
+                background: 'rgba(255, 255, 255, 0.95)'
+            }).then(() => {
+                // Form ko clear karna notification ke baad
+                document.getElementById('cosmeticContactForm').reset();
+            });
+        }

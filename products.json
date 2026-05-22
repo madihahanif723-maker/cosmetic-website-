@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1,
+    "name": "Radiant Lipstick",
+    "price": "$15.99",
+    "image_link": "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=600",
+    "product_type": "makeup",
+    "description": "A smooth matte lipstick for comfortable, all-day wear."
+  },
+  {
+    "id": 2,
+    "name": "Glow Serum",
+    "price": "$24.50",
+    "image_link": "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=600",
+    "product_type": "skincare",
+    "description": "Brightening serum with vitamin C for fresh, glowing skin."
+  },
+  {
+    "id": 3,
+    "name": "Hydrating Primer",
+    "price": "$19.00",
+    "image_link": "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=600",
+    "product_type": "makeup",
+    "description": "A dewy primer that smooths skin and extends makeup wear."
+  },
+  {
+    "id": 4,
+    "name": "Spa Mist",
+    "price": "$12.75",
+    "image_link": "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=600",
+    "product_type": "skincare",
+    "description": "Refreshing facial mist to hydrate and calm skin anytime."
+  }
+]
